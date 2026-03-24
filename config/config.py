@@ -19,3 +19,28 @@ class Config:
 
     # logging file
     LOG_FILE = "logs/system.log"
+
+    # default thresholds (units mentioned)
+    DEFAULT_THRESHOLDS = {
+        "Automotive": {
+            "temperature": 90,   # °C
+            "vibration": 1.2,    # mm/s
+            "pressure": 40,      # bar
+            "energy": 600,       # kWh
+            "production": 80     # units/hour
+        },
+        "Electronics": {
+            "temperature": 80,   # °C
+            "vibration": 1.0,    # mm/s
+            "pressure": 35,      # bar
+            "energy": 500,       # kWh
+            "production": 150    # units/hour
+        },
+        "Steel": {
+            "temperature": 120,  # °C
+            "vibration": 2.0,    # mm/s
+            "pressure": 50,      # bar
+            "energy": 900,       # kWh
+            "production": 40     # units/hour
+        }
+    }

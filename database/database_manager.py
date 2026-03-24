@@ -77,6 +77,37 @@ class DatabaseManager:
         except Error as e:
             print(f"Error while creating tables: {e}")
 
+    def insert_thresholds(self):
+        """Insert default thresholds into table"""
+        try:
+            cursor = self.connection.cursor()
+
+            for sector, values in Config.DEFAULT_THRESHOLDS.items():
+                cursor.execute("""
+                    INSERT INTO sector_thresholds 
+                    (sector, temperature, vibration, pressure, energy, production)
+                    VALUES (%s, %s, %s, %s, %s, %s)
+                    ON DUPLICATE KEY UPDATE
+                    temperature=VALUES(temperature),
+                    vibration=VALUES(vibration),
+                    pressure=VALUES(pressure),
+                    energy=VALUES(energy),
+                    production=VALUES(production)
+                """, (
+                    sector,
+                    values["temperature"],
+                    values["vibration"],
+                    values["pressure"],
+                    values["energy"],
+                    values["production"]
+                ))
+
+            self.connection.commit()
+            print("Thresholds inserted")
+
+        except Error as e:
+            print(f"Error inserting thresholds: {e}")
+
     def close(self):
         """Close database connection"""
         if self.connection and self.connection.is_connected():

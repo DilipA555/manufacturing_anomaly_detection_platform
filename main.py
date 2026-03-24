@@ -4,4 +4,5 @@ from database.database_manager import DatabaseManager
 db = DatabaseManager()
 db.connect()
 db.create_tables()
+db.insert_thresholds()
 db.close()
