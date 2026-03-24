@@ -51,11 +51,24 @@ class DataGenerator:
 
                     # missing data
                     else:
-                        temperature = None
-                        vibration = None
-                        pressure = None
-                        energy = None
-                        production = None
+                        # generate normal values first
+                        temperature = random.uniform(20, thresholds["temperature"])
+                        vibration = random.uniform(0.5, thresholds["vibration"])
+                        pressure = random.uniform(10, thresholds["pressure"])
+                        energy = random.uniform(100, thresholds["energy"])
+                        production = random.uniform(10, thresholds["production"])
+
+                        # randomly make some fields missing
+                        if random.random() < 0.3:
+                            temperature = None
+                        if random.random() < 0.3:
+                            vibration = None
+                        if random.random() < 0.3:
+                            pressure = None
+                        if random.random() < 0.3:
+                            energy = None
+                        if random.random() < 0.3:
+                            production = None
 
                     timestamp = datetime.now() - timedelta(minutes=i)
 
