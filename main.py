@@ -2,7 +2,7 @@ from database.database_manager import DatabaseManager
 from data.data_generator import DataGenerator
 from data.data_ingestion import DataIngestion
 from data.data_processor import DataProcessor
-
+from detection.anomaly_detector import AnomalyDetector
 
 
 # test database connection and table creation
@@ -25,3 +25,8 @@ print(f"Total records loaded: {len(data)}")
 processor = DataProcessor()
 processed_data = processor.process_data(data)
 print(f"Processed records: {len(processed_data)}")
+
+# test anomaly detector
+detector = AnomalyDetector()
+anomalies = detector.detect(processed_data)
+print(f"Total anomalies detected: {len(anomalies)}")
