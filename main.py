@@ -36,3 +36,9 @@ print(f"Total anomalies detected: {len(anomalies)}")
 alert_manager = AlertManager()
 alerts = alert_manager.generate_alerts(anomalies)
 print(f"Total alerts generated: {len(alerts)}")
+
+# write alerts to log file
+with open("alerts.log", "w") as file:
+    for alert in alerts:
+        file.write(alert["message"] + "\n")
+print("Alerts written to alerts.log")
