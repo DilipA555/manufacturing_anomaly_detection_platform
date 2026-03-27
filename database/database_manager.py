@@ -108,6 +108,29 @@ class DatabaseManager:
         except Error as e:
             print(f"Error inserting thresholds: {e}")
 
+    def insert_anomalies(self, alerts):
+        """Insert alert data into anomaly_log table"""
+        try:
+            cursor = self.connection.cursor()
+
+            for alert in alerts:
+                cursor.execute("""
+                    INSERT INTO anomaly_log (machine_id, sector, anomaly_type, value, timestamp)
+                    VALUES (%s, %s, %s, %s, %s)
+                """, (
+                    alert["machine_id"],
+                    alert["sector"],
+                    alert["parameter"],   # maps to anomaly_type
+                    alert["value"],
+                    alert["timestamp"]
+                ))
+
+            self.connection.commit()
+            print("Alerts stored in database")
+
+        except Error as e:
+            print(f"Error inserting alerts: {e}")
+
     def close(self):
         """Close database connection"""
         if self.connection and self.connection.is_connected():

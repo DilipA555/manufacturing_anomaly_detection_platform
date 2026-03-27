@@ -11,7 +11,6 @@ db = DatabaseManager()
 db.connect()
 db.create_tables()
 db.insert_thresholds()
-db.close()
 
 # test data generation
 generator = DataGenerator()
@@ -42,3 +41,8 @@ with open("alerts.log", "w") as file:
     for alert in alerts:
         file.write(alert["message"] + "\n")
 print("Alerts written to alerts.log")
+
+#  store generated alerts into database
+db.insert_anomalies(alerts)
+
+db.close()
