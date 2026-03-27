@@ -92,5 +92,4 @@ class DataProcessor:
             except Exception:
                 continue
 
-        print("Data processed successfully")
         return processed_data

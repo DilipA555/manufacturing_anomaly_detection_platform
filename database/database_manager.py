@@ -6,7 +6,7 @@ from config.config import Config
 class DatabaseManager:
     """Handles database connection and operations"""
 
-    def _init_(self):
+    def __init__(self):
         """Initialize database connection"""
         self.connection = None
 
@@ -19,9 +19,6 @@ class DatabaseManager:
                 password=Config.DB_PASSWORD,
                 database=Config.DB_NAME
             )
-
-            if self.connection.is_connected():
-                print("Connected to database")
 
         except Error as e:
             print(f"Error while connecting: {e}")
@@ -72,7 +69,6 @@ class DatabaseManager:
             """)
 
             self.connection.commit()
-            print("Tables created")
 
         except Error as e:
             print(f"Error while creating tables: {e}")
@@ -103,7 +99,6 @@ class DatabaseManager:
                 ))
 
             self.connection.commit()
-            print("Thresholds inserted")
 
         except Error as e:
             print(f"Error inserting thresholds: {e}")
@@ -126,7 +121,6 @@ class DatabaseManager:
                 ))
 
             self.connection.commit()
-            print("Alerts stored in database")
 
         except Error as e:
             print(f"Error inserting alerts: {e}")
@@ -154,4 +148,3 @@ class DatabaseManager:
         """Close database connection"""
         if self.connection and self.connection.is_connected():
             self.connection.close()
-            print("Database connection closed")

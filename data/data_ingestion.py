@@ -19,7 +19,6 @@ class DataIngestion:
                 for row in reader:
                     data.append(row)
 
-            print("Data loaded successfully")
             return data
 
         except Exception as e:

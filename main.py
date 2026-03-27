@@ -6,55 +6,57 @@ from detection.anomaly_detector import AnomalyDetector
 from alerts.alert_manager import AlertManager
 
 
-# test database connection and table creation
+# setup db
 db = DatabaseManager()
 db.connect()
 db.create_tables()
 db.insert_thresholds()
 
-# test data generation
+# generate data
 generator = DataGenerator()
 generator.generate_data()
 
-# test data ingestion
+# load data
 ingestion = DataIngestion()
 data = ingestion.read_data()
-print(f"Total records loaded: {len(data)}")
 
-# test data processor
+# process data
 processor = DataProcessor()
 processed_data = processor.process_data(data)
-print(f"Processed records: {len(processed_data)}")
 
-# test anomaly detector
+# detect anomalies
 detector = AnomalyDetector()
 anomalies = detector.detect(processed_data)
-print(f"Total anomalies detected: {len(anomalies)}")
 
-# test alert manager
+# generate alerts
 alert_manager = AlertManager()
 alerts = alert_manager.generate_alerts(anomalies)
-print(f"Total alerts generated: {len(alerts)}")
 
 # write alerts to log file
 with open("alerts.log", "w") as file:
     for alert in alerts:
         file.write(alert["message"] + "\n")
-print("Alerts written to alerts.log")
 
-#  store generated alerts into database
+# store alerts in db
 db.insert_anomalies(alerts)
+
+# display summary
+print("\n=== SYSTEM SUMMARY ===")
+print(f"Total records processed: {len(processed_data)}")
+print(f"Total anomalies detected: {len(anomalies)}")
+print(f"Total alerts generated: {len(alerts)}")
 
 # fetch recent alerts from DB
 recent_alerts = db.fetch_anomalies()
-print("\nRecent Alerts from Database:")
+print("\n=== RECENT ALERTS ===")
 for alert in recent_alerts:
     print(
         f"Machine: {alert['machine_id']} | "
         f"Sector: {alert['sector']} | "
         f"Type: {alert['anomaly_type']} | "
-        f"Value: {alert['value']} | "
+        f"Value: {round(alert['value'], 2)} | "
         f"Time: {alert['timestamp'].strftime('%Y-%m-%d %H:%M:%S')}"
     )
 
+# close db
 db.close()
