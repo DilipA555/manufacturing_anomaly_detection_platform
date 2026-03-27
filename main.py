@@ -3,6 +3,7 @@ from data.data_generator import DataGenerator
 from data.data_ingestion import DataIngestion
 from data.data_processor import DataProcessor
 from detection.anomaly_detector import AnomalyDetector
+from alerts.alert_manager import AlertManager
 
 
 # test database connection and table creation
@@ -30,3 +31,8 @@ print(f"Processed records: {len(processed_data)}")
 detector = AnomalyDetector()
 anomalies = detector.detect(processed_data)
 print(f"Total anomalies detected: {len(anomalies)}")
+
+# test alert manager
+alert_manager = AlertManager()
+alerts = alert_manager.generate_alerts(anomalies)
+print(f"Total alerts generated: {len(alerts)}")
