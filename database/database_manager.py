@@ -131,6 +131,25 @@ class DatabaseManager:
         except Error as e:
             print(f"Error inserting alerts: {e}")
 
+    def fetch_anomalies(self, limit=10):
+        """Fetch recent anomaly records from database"""
+        try:
+            cursor = self.connection.cursor(dictionary=True)
+
+            cursor.execute(f"""
+                SELECT machine_id, sector, anomaly_type, value, timestamp
+                FROM anomaly_log
+                ORDER BY timestamp DESC
+                LIMIT {limit}
+            """)
+
+            results = cursor.fetchall()
+            return results
+
+        except Error as e:
+            print(f"Error fetching data: {e}")
+            return []
+
     def close(self):
         """Close database connection"""
         if self.connection and self.connection.is_connected():

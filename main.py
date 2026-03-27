@@ -45,4 +45,16 @@ print("Alerts written to alerts.log")
 #  store generated alerts into database
 db.insert_anomalies(alerts)
 
+# fetch recent alerts from DB
+recent_alerts = db.fetch_anomalies()
+print("\nRecent Alerts from Database:")
+for alert in recent_alerts:
+    print(
+        f"Machine: {alert['machine_id']} | "
+        f"Sector: {alert['sector']} | "
+        f"Type: {alert['anomaly_type']} | "
+        f"Value: {alert['value']} | "
+        f"Time: {alert['timestamp'].strftime('%Y-%m-%d %H:%M:%S')}"
+    )
+
 db.close()
