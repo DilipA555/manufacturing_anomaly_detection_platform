@@ -31,19 +31,19 @@ class AnomalyDetector:
 
             # apply tolerance-based checks
             if temperature is not None and temperature > temperature_threshold * 1.1:
-                anomaly_flags["temperature"] = True
+                anomaly_flags["temperature"] = temperature
 
             if vibration is not None and vibration > vibration_threshold * 1.2:
-                anomaly_flags["vibration"] = True
+                anomaly_flags["vibration"] = vibration
 
             if pressure is not None and pressure > pressure_threshold * 1.1:
-                anomaly_flags["pressure"] = True
+                anomaly_flags["pressure"] = pressure
 
             if energy is not None and energy > energy_threshold * 1.2:
-                anomaly_flags["energy"] = True
+                anomaly_flags["energy"] = energy
 
             if production is not None and production < production_threshold * 0.7:
-                anomaly_flags["production"] = True
+                anomaly_flags["production"] = production
 
             # store anomaly if any condition triggered
             if anomaly_flags:
