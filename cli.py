@@ -8,7 +8,7 @@ if __name__ == "__main__":
     profiler = cProfile.Profile()
     profiler.enable()
 
-    result = run_pipeline()
+    result = run_pipeline(generate=True)
 
     profiler.disable()
 

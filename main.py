@@ -17,8 +17,8 @@ logging.basicConfig(
     format="%(asctime)s - %(levelname)s - %(message)s"
 )
 
-def run_pipeline() -> Dict[str, Any]:
-    
+def run_pipeline(generate: bool = False) -> Dict[str, Any]:
+
     tracemalloc.start()
     # setup db
     db = DatabaseManager()
@@ -27,9 +27,10 @@ def run_pipeline() -> Dict[str, Any]:
     db.insert_thresholds()
 
     # generate data
-    generator = DataGenerator()
-    generator.generate_data()
-    logging.info("Data generation completed")
+    if generate:
+        generator = DataGenerator()
+        generator.generate_data()
+        logging.info("Data generation completed")
 
     # load data
     ingestion = DataIngestion()
