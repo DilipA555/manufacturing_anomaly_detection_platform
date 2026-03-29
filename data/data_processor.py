@@ -1,3 +1,4 @@
+from typing import List, Dict, Any
 from datetime import datetime
 from collections import defaultdict
 
@@ -5,7 +6,8 @@ from collections import defaultdict
 class DataProcessor:
     """Handles data cleaning and missing value filling"""
 
-    def process_data(self, data):
+
+    def process_data(self, data: List[Dict[str, str]]) -> List[Dict[str, Any]]:
         """Process raw data and fill missing values using sector averages"""
 
         # store sums and counts per sector

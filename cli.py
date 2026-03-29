@@ -1,6 +1,7 @@
 import cProfile
 from main import run_pipeline
 
+
 if __name__ == "__main__":
     print("=== MANUFACTURING ANOMALY DETECTION PLATFORM ===\n")
 

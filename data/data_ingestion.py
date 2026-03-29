@@ -1,3 +1,4 @@
+from typing import List, Dict
 import csv
 from config.config import Config
 
@@ -5,11 +6,14 @@ from config.config import Config
 class DataIngestion:
     """Reads data from CSV file"""
 
+
     def __init__(self):
+
         self.file_path = Config.DATA_FILE_PATH
 
-    def read_data(self):
+    def read_data(self) -> List[Dict[str, str]]:
         """Read CSV and return data as list of dictionaries"""
+        
         data = []
 
         try:

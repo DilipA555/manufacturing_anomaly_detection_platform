@@ -1,10 +1,12 @@
+from typing import List, Dict, Any
 from config.config import Config
 
 
 class AnomalyDetector:
     """Detects anomalies based on threshold values with tolerance"""
 
-    def detect(self, processed_data):
+
+    def detect(self, processed_data: List[Dict[str, Any]]) -> List[Dict[str, Any]]:
         """Check each record for anomalies"""
 
         anomalies = []

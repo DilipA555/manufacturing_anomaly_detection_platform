@@ -1,4 +1,4 @@
-def format_alert_message(machine_id, sector, parameter, value):
+def format_alert_message(machine_id: str, sector: str, parameter: str, value: float) -> str:
     """Generate a readable alert message"""
 
     return (

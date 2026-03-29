@@ -7,12 +7,15 @@ from config.config import Config
 class DataGenerator:
     """Generates synthetic machine data"""
 
+
     def __init__(self):
+
         self.file_path = Config.DATA_FILE_PATH
         self.num_records = 10000
 
-    def generate_data(self):
+    def generate_data(self) -> None:
         """Generate CSV data"""
+        
         try:
             with open(self.file_path, mode='w', newline='') as file:
                 writer = csv.writer(file)

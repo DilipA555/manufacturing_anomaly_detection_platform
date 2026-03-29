@@ -1,3 +1,4 @@
+from typing import List, Dict, Any, Tuple
 import mysql.connector
 from mysql.connector import Error
 from config.config import Config
@@ -6,12 +7,16 @@ from config.config import Config
 class DatabaseManager:
     """Handles database connection and operations"""
 
+
+
     def __init__(self):
         """Initialize database connection"""
+
         self.connection = None
 
-    def connect(self):
+    def connect(self) -> None:
         """Connect to MySQL database"""
+
         try:
             self.connection = mysql.connector.connect(
                 host=Config.DB_HOST,
@@ -23,8 +28,9 @@ class DatabaseManager:
         except Error as e:
             print(f"Error while connecting: {e}")
 
-    def create_tables(self):
+    def create_tables(self) -> None:
         """Create required tables if not present"""
+
         try:
             cursor = self.connection.cursor()
 
@@ -73,8 +79,9 @@ class DatabaseManager:
         except Error as e:
             print(f"Error while creating tables: {e}")
 
-    def insert_thresholds(self):
+    def insert_thresholds(self) -> None:
         """Insert default thresholds into table"""
+
         try:
             cursor = self.connection.cursor()
 
@@ -103,8 +110,9 @@ class DatabaseManager:
         except Error as e:
             print(f"Error inserting thresholds: {e}")
 
-    def insert_anomalies(self, alerts):
+    def insert_anomalies(self, alerts: List[Dict[str, Any]]) -> None:
         """Insert alert data into anomaly_log table"""
+
         try:
             cursor = self.connection.cursor()
 
@@ -125,8 +133,9 @@ class DatabaseManager:
         except Error as e:
             print(f"Error inserting alerts: {e}")
 
-    def fetch_anomalies(self, limit=10):
+    def fetch_anomalies(self, limit: int = 10) -> List[Dict[str, Any]]:
         """Fetch recent anomaly records from database"""
+
         try:
             cursor = self.connection.cursor(dictionary=True)
 
@@ -145,8 +154,9 @@ class DatabaseManager:
             return []
 
 
-    def get_anomaly_analytics(self):
+    def get_anomaly_analytics(self) -> List[Tuple[str, str, int]]:
         """Get sector summary and parameter breakdown"""
+
         try:
             cursor = self.connection.cursor()
 
@@ -163,7 +173,8 @@ class DatabaseManager:
             print(f"Error fetching analytics: {e}")
             return []
 
-    def close(self):
+    def close(self) -> None:
         """Close database connection"""
+        
         if self.connection and self.connection.is_connected():
             self.connection.close()

@@ -1,3 +1,4 @@
+from typing import Dict, Any
 from database.database_manager import DatabaseManager
 from data.data_generator import DataGenerator
 from data.data_ingestion import DataIngestion
@@ -8,6 +9,7 @@ import logging
 import cProfile
 import tracemalloc
 
+
 # configure logging for system monitoring
 logging.basicConfig(
     filename="app.log",
@@ -15,7 +17,8 @@ logging.basicConfig(
     format="%(asctime)s - %(levelname)s - %(message)s"
 )
 
-def run_pipeline():
+def run_pipeline() -> Dict[str, Any]:
+    
     tracemalloc.start()
     # setup db
     db = DatabaseManager()

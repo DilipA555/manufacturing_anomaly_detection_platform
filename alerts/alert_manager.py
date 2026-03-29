@@ -1,10 +1,12 @@
+from typing import List, Dict, Any
 from utils.helpers import format_alert_message
 
 
 class AlertManager:
     """Handles alert generation from detected anomalies"""
 
-    def generate_alerts(self, anomalies):
+
+    def generate_alerts(self, anomalies: List[Dict[str, Any]]) -> List[Dict[str, Any]]:
         """Convert anomalies into structured alert data"""
 
         alerts = []
