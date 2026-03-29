@@ -1,3 +1,4 @@
+app.log
 .env
 alerts.log
 data/manufacturing_data.csv
