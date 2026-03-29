@@ -83,7 +83,5 @@ class DataGenerator:
                         timestamp
                     ])
 
-            print("Data generation completed")
-
         except Exception as e:
             print(f"Error generating data: {e}")
