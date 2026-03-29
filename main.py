@@ -4,6 +4,14 @@ from data.data_ingestion import DataIngestion
 from data.data_processor import DataProcessor
 from detection.anomaly_detector import AnomalyDetector
 from alerts.alert_manager import AlertManager
+import logging
+
+# configure logging for system monitoring
+logging.basicConfig(
+    filename="app.log",
+    level=logging.INFO,
+    format="%(asctime)s - %(levelname)s - %(message)s"
+)
 
 
 # setup db
@@ -15,22 +23,27 @@ db.insert_thresholds()
 # generate data
 generator = DataGenerator()
 generator.generate_data()
+logging.info("Data generation completed")
 
 # load data
 ingestion = DataIngestion()
 data = ingestion.read_data()
+logging.info(f"Loaded {len(data)} records")
 
 # process data
 processor = DataProcessor()
 processed_data = processor.process_data(data)
+logging.info("Data processing completed")
 
 # detect anomalies
 detector = AnomalyDetector()
 anomalies = detector.detect(processed_data)
+logging.info(f"Detected {len(anomalies)} anomalies")
 
 # generate alerts
 alert_manager = AlertManager()
 alerts = alert_manager.generate_alerts(anomalies)
+logging.info(f"Generated {len(alerts)} alerts")
 
 # write alerts to log file
 with open("alerts.log", "w") as file:
@@ -39,6 +52,7 @@ with open("alerts.log", "w") as file:
 
 # store alerts in db
 db.insert_anomalies(alerts)
+logging.info("Alerts stored in database")
 
 # display summary
 print("\n=== SYSTEM SUMMARY ===")
