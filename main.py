@@ -5,6 +5,8 @@ from data.data_processor import DataProcessor
 from detection.anomaly_detector import AnomalyDetector
 from alerts.alert_manager import AlertManager
 import logging
+import cProfile
+import tracemalloc
 
 # configure logging for system monitoring
 logging.basicConfig(
@@ -13,88 +15,98 @@ logging.basicConfig(
     format="%(asctime)s - %(levelname)s - %(message)s"
 )
 
+def run_pipeline():
+    tracemalloc.start()
+    # setup db
+    db = DatabaseManager()
+    db.connect()
+    db.create_tables()
+    db.insert_thresholds()
 
-# setup db
-db = DatabaseManager()
-db.connect()
-db.create_tables()
-db.insert_thresholds()
+    # generate data
+    generator = DataGenerator()
+    generator.generate_data()
+    logging.info("Data generation completed")
 
-# generate data
-generator = DataGenerator()
-generator.generate_data()
-logging.info("Data generation completed")
+    # load data
+    ingestion = DataIngestion()
+    data = ingestion.read_data()
+    logging.info(f"Loaded {len(data)} records")
 
-# load data
-ingestion = DataIngestion()
-data = ingestion.read_data()
-logging.info(f"Loaded {len(data)} records")
+    # process data
+    processor = DataProcessor()
+    processed_data = processor.process_data(data)
+    logging.info("Data processing completed")
 
-# process data
-processor = DataProcessor()
-processed_data = processor.process_data(data)
-logging.info("Data processing completed")
+    # detect anomalies
+    detector = AnomalyDetector()
+    anomalies = detector.detect(processed_data)
+    logging.info(f"Detected {len(anomalies)} anomalies")
 
-# detect anomalies
-detector = AnomalyDetector()
-anomalies = detector.detect(processed_data)
-logging.info(f"Detected {len(anomalies)} anomalies")
+    # generate alerts
+    alert_manager = AlertManager()
+    alerts = alert_manager.generate_alerts(anomalies)
+    logging.info(f"Generated {len(alerts)} alerts")
 
-# generate alerts
-alert_manager = AlertManager()
-alerts = alert_manager.generate_alerts(anomalies)
-logging.info(f"Generated {len(alerts)} alerts")
+    # write alerts to log file
+    with open("alerts.log", "w") as file:
+        for alert in alerts:
+            file.write(alert["message"] + "\n")
 
-# write alerts to log file
-with open("alerts.log", "w") as file:
-    for alert in alerts:
-        file.write(alert["message"] + "\n")
+    # store alerts in db
+    db.insert_anomalies(alerts)
+    logging.info("Alerts stored in database")
 
-# store alerts in db
-db.insert_anomalies(alerts)
-logging.info("Alerts stored in database")
+    # display summary
+    print("\n=== SYSTEM SUMMARY ===")
+    print(f"Total records processed: {len(processed_data)}")
+    print(f"Total anomalies detected: {len(anomalies)}")
+    print(f"Total alerts generated: {len(alerts)}")
 
-# display summary
-print("\n=== SYSTEM SUMMARY ===")
-print(f"Total records processed: {len(processed_data)}")
-print(f"Total anomalies detected: {len(anomalies)}")
-print(f"Total alerts generated: {len(alerts)}")
+    # fetch recent alerts from DB
+    recent_alerts = db.fetch_anomalies()
+    print("\n=== RECENT ALERTS ===")
+    for alert in recent_alerts:
+        print(
+            f"Machine: {alert['machine_id']} | "
+            f"Sector: {alert['sector']} | "
+            f"Type: {alert['anomaly_type']} | "
+            f"Value: {round(alert['value'], 2)} | "
+            f"Time: {alert['timestamp'].strftime('%Y-%m-%d %H:%M:%S')}"
+        )
 
-# fetch recent alerts from DB
-recent_alerts = db.fetch_anomalies()
-print("\n=== RECENT ALERTS ===")
-for alert in recent_alerts:
-    print(
-        f"Machine: {alert['machine_id']} | "
-        f"Sector: {alert['sector']} | "
-        f"Type: {alert['anomaly_type']} | "
-        f"Value: {round(alert['value'], 2)} | "
-        f"Time: {alert['timestamp'].strftime('%Y-%m-%d %H:%M:%S')}"
-    )
+    # sector analytics
+    analytics_data = db.get_anomaly_analytics()
 
-# sector analytics
-analytics_data = db.get_anomaly_analytics()
+    sector_totals = {}
+    sector_parameter_breakdown = {}
 
-sector_totals = {}
-sector_parameter_breakdown = {}
+    for sector, parameter, count in analytics_data:
+        sector_totals[sector] = sector_totals.get(sector, 0) + count
 
-for sector, parameter, count in analytics_data:
-    sector_totals[sector] = sector_totals.get(sector, 0) + count
+        if sector not in sector_parameter_breakdown:
+            sector_parameter_breakdown[sector] = {}
 
-    if sector not in sector_parameter_breakdown:
-        sector_parameter_breakdown[sector] = {}
+        sector_parameter_breakdown[sector][parameter] = count
 
-    sector_parameter_breakdown[sector][parameter] = count
+    print("\n=== SECTOR SUMMARY ===")
+    for sector, total in sector_totals.items():
+        print(f"{sector}: {total}")
 
-print("\n=== SECTOR SUMMARY ===")
-for sector, total in sector_totals.items():
-    print(f"{sector}: {total}")
+    print("\n=== PARAMETER BREAKDOWN ===")
+    for sector, parameters in sector_parameter_breakdown.items():
+        print(f"\n{sector}:")
+        for parameter, count in parameters.items():
+            print(f"   {parameter}: {count}")
 
-print("\n=== PARAMETER BREAKDOWN ===")
-for sector, parameters in sector_parameter_breakdown.items():
-    print(f"\n{sector}:")
-    for parameter, count in parameters.items():
-        print(f"   {parameter}: {count}")
+    # close db
+    db.close()
 
-# close db
-db.close()
+    current, peak = tracemalloc.get_traced_memory()
+    print(f"\nMemory Usage: {current / 10**6:.2f} MB")
+    print(f"Peak Memory Usage: {peak / 10**6:.2f} MB\n")
+    tracemalloc.stop()
+
+
+if __name__ == "__main__":
+    cProfile.run("run_pipeline()")
