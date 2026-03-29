@@ -58,5 +58,11 @@ for alert in recent_alerts:
         f"Time: {alert['timestamp'].strftime('%Y-%m-%d %H:%M:%S')}"
     )
 
+# sector-wise anomalies
+print("\n=== SECTOR-WISE ANOMALIES ===")
+sector_data = db.get_anomaly_count_by_sector()
+for sector, count in sector_data:
+    print(f"{sector}: {count}")
+
 # close db
 db.close()

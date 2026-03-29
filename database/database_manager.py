@@ -144,6 +144,25 @@ class DatabaseManager:
             print(f"Error fetching data: {e}")
             return []
 
+
+    def get_anomaly_count_by_sector(self):
+        """Get total anomalies per sector"""
+        try:
+            cursor = self.connection.cursor()
+
+            cursor.execute("""
+                SELECT sector, COUNT(*) as total_anomalies
+                FROM anomaly_log
+                GROUP BY sector
+            """)
+
+            results = cursor.fetchall()
+            return results
+
+        except Error as e:
+            print(f"Error fetching sector-wise anomalies: {e}")
+            return []
+
     def close(self):
         """Close database connection"""
         if self.connection and self.connection.is_connected():
