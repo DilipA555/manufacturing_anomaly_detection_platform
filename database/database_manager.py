@@ -145,22 +145,22 @@ class DatabaseManager:
             return []
 
 
-    def get_anomaly_count_by_sector(self):
-        """Get total anomalies per sector"""
+    def get_anomaly_analytics(self):
+        """Get sector summary and parameter breakdown"""
         try:
             cursor = self.connection.cursor()
 
             cursor.execute("""
-                SELECT sector, COUNT(*) as total_anomalies
+                SELECT sector, anomaly_type, COUNT(*) as count
                 FROM anomaly_log
-                GROUP BY sector
+                GROUP BY sector, anomaly_type
             """)
 
             results = cursor.fetchall()
             return results
 
         except Error as e:
-            print(f"Error fetching sector-wise anomalies: {e}")
+            print(f"Error fetching analytics: {e}")
             return []
 
     def close(self):

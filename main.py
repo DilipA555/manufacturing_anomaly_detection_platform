@@ -58,11 +58,29 @@ for alert in recent_alerts:
         f"Time: {alert['timestamp'].strftime('%Y-%m-%d %H:%M:%S')}"
     )
 
-# sector-wise anomalies
-print("\n=== SECTOR-WISE ANOMALIES ===")
-sector_data = db.get_anomaly_count_by_sector()
-for sector, count in sector_data:
-    print(f"{sector}: {count}")
+# sector analytics
+analytics_data = db.get_anomaly_analytics()
+
+sector_totals = {}
+sector_parameter_breakdown = {}
+
+for sector, parameter, count in analytics_data:
+    sector_totals[sector] = sector_totals.get(sector, 0) + count
+
+    if sector not in sector_parameter_breakdown:
+        sector_parameter_breakdown[sector] = {}
+
+    sector_parameter_breakdown[sector][parameter] = count
+
+print("\n=== SECTOR SUMMARY ===")
+for sector, total in sector_totals.items():
+    print(f"{sector}: {total}")
+
+print("\n=== PARAMETER BREAKDOWN ===")
+for sector, parameters in sector_parameter_breakdown.items():
+    print(f"\n{sector}:")
+    for parameter, count in parameters.items():
+        print(f"   {parameter}: {count}")
 
 # close db
 db.close()
