@@ -205,6 +205,30 @@ class DatabaseManager:
             print(f"Error fetching analytics: {e}")
             return []
 
+    def get_dashboard_metrics(self) -> Tuple[int, int, int]:
+        """Fetch total records, anomalies, and alerts for dashboard metrics."""
+        
+        try:
+            cursor = self.connection.cursor()
+
+            cursor.execute("SELECT COUNT(*) FROM machine_data")
+            total_records: int = cursor.fetchone()[0]
+
+            cursor.execute("SELECT COUNT(*) FROM anomaly_log")
+            total_alerts: int = cursor.fetchone()[0]
+
+            cursor.execute("""
+                SELECT COUNT(DISTINCT machine_id, timestamp)
+                FROM anomaly_log
+            """)
+            total_anomalies: int = cursor.fetchone()[0]
+
+            return total_records, total_anomalies, total_alerts
+
+        except Error as e:
+            print(f"Error fetching metrics: {e}")
+            return 0, 0, 0
+
     def close(self) -> None:
         """Close database connection"""
         
