@@ -25,11 +25,11 @@ class DataProcessor:
             try:
                 sector = row["sector"]
 
-                temperature = float(row["temperature"]) if row["temperature"] else None
-                vibration = float(row["vibration"]) if row["vibration"] else None
-                pressure = float(row["pressure"]) if row["pressure"] else None
-                energy = float(row["energy"]) if row["energy"] else None
-                production = float(row["production"]) if row["production"] else None
+                temperature = float(row["temperature"]) if row["temperature"] not in ("", None) else None
+                vibration = float(row["vibration"]) if row["vibration"] not in ("", None) else None
+                pressure = float(row["pressure"]) if row["pressure"] not in ("", None) else None
+                energy = float(row["energy"]) if row["energy"] not in ("", None) else None
+                production = float(row["production"]) if row["production"] not in ("", None) else None
 
                 if all(value is None for value in [temperature, vibration, pressure, energy, production]):
                     continue
@@ -72,11 +72,11 @@ class DataProcessor:
                 sector = row["sector"]
                 averages = sector_averages.get(sector, {})
 
-                temperature = float(row["temperature"]) if row["temperature"] else averages.get("temperature")
-                vibration = float(row["vibration"]) if row["vibration"] else averages.get("vibration")
-                pressure = float(row["pressure"]) if row["pressure"] else averages.get("pressure")
-                energy = float(row["energy"]) if row["energy"] else averages.get("energy")
-                production = float(row["production"]) if row["production"] else averages.get("production")
+                temperature = float(row["temperature"]) if row["temperature"] not in ("", None) else averages.get("temperature", 0)
+                vibration = float(row["vibration"]) if row["vibration"] not in ("", None) else averages.get("vibration", 0)
+                pressure = float(row["pressure"]) if row["pressure"] not in ("", None) else averages.get("pressure", 0)
+                energy = float(row["energy"]) if row["energy"] not in ("", None) else averages.get("energy", 0)
+                production = float(row["production"]) if row["production"] not in ("", None) else averages.get("production", 0)
 
                 timestamp = datetime.strptime(row["timestamp"], "%Y-%m-%d %H:%M:%S.%f")
 
