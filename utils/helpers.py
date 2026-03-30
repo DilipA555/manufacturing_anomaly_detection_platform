@@ -1,7 +1,31 @@
-def format_alert_message(machine_id: str, sector: str, parameter: str, value: float) -> str:
-    """Generate a readable alert message"""
+from datetime import datetime
+from typing import Union
+
+
+def format_alert_message(
+    machine_id: str,
+    sector: str,
+    param: str,
+    value: Union[int, float],
+    timestamp: datetime
+) -> str:
+    """
+    Format alert message for logging
+
+    Args:
+        machine_id (str): Machine identifier
+        sector (str): Sector name
+        param (str): Parameter causing anomaly
+        value (int | float): Detected value
+        timestamp (datetime): Original data timestamp
+
+    Returns:
+        str: Formatted alert log string
+    """
+
+    formatted_time = timestamp.strftime("%Y-%m-%d %H:%M:%S")
 
     return (
-        f"ALERT: {parameter.upper()} anomaly in Machine {machine_id} "
-        f"({sector}) with value {value}"
+        f"{formatted_time} | Machine: {machine_id} | Sector: {sector} | "
+        f"Parameter: {param} | Value: {round(value, 2)}"
     )

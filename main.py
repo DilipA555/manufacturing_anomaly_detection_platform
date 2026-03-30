@@ -6,7 +6,6 @@ from data.data_processor import DataProcessor
 from detection.anomaly_detector import AnomalyDetector
 from alerts.alert_manager import AlertManager
 import logging
-import cProfile
 import tracemalloc
 
 
@@ -14,7 +13,8 @@ import tracemalloc
 logging.basicConfig(
     filename="app.log",
     level=logging.INFO,
-    format="%(asctime)s - %(levelname)s - %(message)s"
+    format="%(asctime)s - %(levelname)s - %(message)s",
+    datefmt="%Y-%m-%d %H:%M:%S"
 )
 
 def run_pipeline(generate: bool = False) -> Dict[str, Any]:

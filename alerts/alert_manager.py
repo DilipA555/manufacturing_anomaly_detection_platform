@@ -24,7 +24,8 @@ class AlertManager:
                     machine_id,
                     sector,
                     parameter,
-                    value
+                    value,
+                    timestamp
                 )
 
                 alerts.append({
