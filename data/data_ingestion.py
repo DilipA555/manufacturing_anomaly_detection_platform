@@ -1,3 +1,4 @@
+from utils.exceptions import DataIngestionError
 from typing import List, Dict
 import csv
 from config.config import Config
@@ -10,7 +11,7 @@ class DataIngestion:
     def __init__(self):
 
         self.file_path = Config.DATA_FILE_PATH
-        
+
 
     def read_data(self) -> List[Dict[str, str]]:
         """Read CSV and return data as list of dictionaries"""
@@ -27,5 +28,4 @@ class DataIngestion:
             return data
 
         except Exception as e:
-            print(f"Error reading data: {e}")
-            return []
+            raise DataIngestionError(f"Error reading data: {e}")
