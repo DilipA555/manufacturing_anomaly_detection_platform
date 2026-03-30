@@ -8,7 +8,6 @@ class DatabaseManager:
     """Handles database connection and operations"""
 
 
-
     def __init__(self):
         """Initialize database connection"""
 
@@ -57,7 +56,6 @@ class DatabaseManager:
                     pressure FLOAT,
                     energy FLOAT,
                     production FLOAT,
-                    status VARCHAR(20),
                     timestamp DATETIME
                 )
             """)
@@ -110,6 +108,38 @@ class DatabaseManager:
         except Error as e:
             print(f"Error inserting thresholds: {e}")
 
+    def insert_machine_data(self, data: List[Dict[str, Any]]) -> None:
+        """Insert processed machine data into machine_data table"""
+
+        try:
+            cursor = self.connection.cursor()
+
+            # clear old data
+            cursor.execute("TRUNCATE TABLE machine_data")
+
+            for row in data:
+                cursor.execute("""
+                    INSERT INTO machine_data (
+                        machine_id, sector, temperature, vibration,
+                        pressure, energy, production, timestamp
+                    )
+                    VALUES (%s, %s, %s, %s, %s, %s, %s, %s)
+                """, (
+                    row["machine_id"],
+                    row["sector"],
+                    row["temperature"],
+                    row["vibration"],
+                    row["pressure"],
+                    row["energy"],
+                    row["production"],
+                    row["timestamp"]
+                ))
+
+            self.connection.commit()
+
+        except Error as e:
+            print(f"Error inserting machine data: {e}")
+
     def insert_anomalies(self, alerts: List[Dict[str, Any]]) -> None:
         """Insert alert data into anomaly_log table"""
 
@@ -127,6 +157,16 @@ class DatabaseManager:
                     alert["value"],
                     alert["timestamp"]
                 ))
+
+            # keep only latest 500 anomaly records (for testing)
+            cursor.execute("""
+            DELETE FROM anomaly_log
+            WHERE id NOT IN (
+                SELECT id FROM (
+                    SELECT id FROM anomaly_log ORDER BY timestamp DESC LIMIT 500
+                ) temp
+            )
+            """)
 
             self.connection.commit()
 

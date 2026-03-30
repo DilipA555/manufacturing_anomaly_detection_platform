@@ -41,6 +41,7 @@ def run_pipeline(generate: bool = False) -> Dict[str, Any]:
     processor = DataProcessor()
     processed_data = processor.process_data(data)
     logging.info("Data processing completed")
+    db.insert_machine_data(processed_data)
 
     # detect anomalies
     detector = AnomalyDetector()
