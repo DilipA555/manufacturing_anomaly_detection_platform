@@ -1,9 +1,9 @@
 import os
 from dotenv import load_dotenv
 
+
 # load values from .env file
 load_dotenv()
-
 
 class Config:
     """Stores configuration values"""

@@ -18,6 +18,7 @@ logging.basicConfig(
 )
 
 def run_pipeline(generate: bool = False) -> Dict[str, Any]:
+    """Execute the full data pipeline from generation to alert creation"""
 
     tracemalloc.start()
     # setup db

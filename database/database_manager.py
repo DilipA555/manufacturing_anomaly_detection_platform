@@ -13,6 +13,7 @@ class DatabaseManager:
 
         self.connection = None
 
+
     def connect(self) -> None:
         """Connect to MySQL database"""
 
@@ -26,6 +27,7 @@ class DatabaseManager:
 
         except Error as e:
             print(f"Error while connecting: {e}")
+
 
     def create_tables(self) -> None:
         """Create required tables if not present"""
@@ -77,6 +79,7 @@ class DatabaseManager:
         except Error as e:
             print(f"Error while creating tables: {e}")
 
+
     def insert_thresholds(self) -> None:
         """Insert default thresholds into table"""
 
@@ -107,6 +110,7 @@ class DatabaseManager:
 
         except Error as e:
             print(f"Error inserting thresholds: {e}")
+
 
     def insert_machine_data(self, data: List[Dict[str, Any]]) -> None:
         """Insert processed machine data into machine_data table"""
@@ -140,6 +144,7 @@ class DatabaseManager:
         except Error as e:
             print(f"Error inserting machine data: {e}")
 
+
     def insert_anomalies(self, alerts: List[Dict[str, Any]]) -> None:
         """Insert alert data into anomaly_log table"""
 
@@ -164,6 +169,7 @@ class DatabaseManager:
 
         except Error as e:
             print(f"Error inserting alerts: {e}")
+
 
     def fetch_anomalies(self, limit: int = 10) -> List[Dict[str, Any]]:
         """Fetch recent anomaly records from database"""
@@ -204,10 +210,11 @@ class DatabaseManager:
         except Error as e:
             print(f"Error fetching analytics: {e}")
             return []
+        
 
     def get_dashboard_metrics(self) -> Tuple[int, int, int]:
-        """Fetch total records, anomalies, and alerts for dashboard metrics."""
-        
+        """Fetch total records, anomalies, and alerts for dashboard metrics"""
+
         try:
             cursor = self.connection.cursor()
 
@@ -228,6 +235,7 @@ class DatabaseManager:
         except Error as e:
             print(f"Error fetching metrics: {e}")
             return 0, 0, 0
+
 
     def close(self) -> None:
         """Close database connection"""

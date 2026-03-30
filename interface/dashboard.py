@@ -15,7 +15,6 @@ st.set_page_config(page_title="Anomaly Dashboard", layout="wide")
 # title
 st.title("Manufacturing Anomaly Detection Dashboard")
 
-
 # connect to database
 db = DatabaseManager()
 db.connect()

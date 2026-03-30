@@ -10,13 +10,15 @@ class DataGenerator:
 
 
     def generate_normal_values(self, thresholds: Dict[str, float]) -> Dict[str, float]:
+        """Generate normal sensor values based on sector thresholds."""
+
         return {
             "temperature": random.uniform(thresholds["temperature"] - 10, thresholds["temperature"]),
             "vibration": random.uniform(thresholds["vibration"] - 0.5, thresholds["vibration"]),
             "pressure": random.uniform(thresholds["pressure"] - 5, thresholds["pressure"]),
             "energy": random.uniform(thresholds["energy"] - 100, thresholds["energy"]),
             "production": random.uniform(thresholds["production"] - 20, thresholds["production"])
-    }
+        }
 
     def __init__(self):
 
@@ -44,7 +46,7 @@ class DataGenerator:
                     "Automotive": [f"A_{i}" for i in range(1, 21)],
                     "Electronics": [f"E_{i}" for i in range(1, 21)],
                     "Steel": [f"S_{i}" for i in range(1, 21)]
-}
+                }
 
                 for i in range(self.num_records):
                     sector = random.choice(sectors)
@@ -104,7 +106,7 @@ class DataGenerator:
                         pressure = values["pressure"]
                         energy = values["energy"]
                         production = values["production"]
-                        
+
                         # randomly make some fields missing
                         if random.random() < 0.2:
                             temperature = None

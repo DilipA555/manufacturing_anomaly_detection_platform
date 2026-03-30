@@ -10,6 +10,7 @@ class DataIngestion:
     def __init__(self):
 
         self.file_path = Config.DATA_FILE_PATH
+        
 
     def read_data(self) -> List[Dict[str, str]]:
         """Read CSV and return data as list of dictionaries"""
