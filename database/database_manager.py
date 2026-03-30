@@ -145,6 +145,8 @@ class DatabaseManager:
 
         try:
             cursor = self.connection.cursor()
+            cursor.execute("TRUNCATE TABLE anomaly_log")
+            self.connection.commit()
 
             for alert in alerts:
                 cursor.execute("""
@@ -157,16 +159,6 @@ class DatabaseManager:
                     alert["value"],
                     alert["timestamp"]
                 ))
-
-            # keep only latest 500 anomaly records (for testing)
-            cursor.execute("""
-            DELETE FROM anomaly_log
-            WHERE id NOT IN (
-                SELECT id FROM (
-                    SELECT id FROM anomaly_log ORDER BY timestamp DESC LIMIT 500
-                ) temp
-            )
-            """)
 
             self.connection.commit()
 
