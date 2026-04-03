@@ -18,9 +18,6 @@ class Config:
     # file path
     DATA_FILE_PATH = "data/manufacturing_data.csv"
 
-    # logging file
-    LOG_FILE = "logs/system.log"
-
     # default thresholds (units mentioned)
     DEFAULT_THRESHOLDS = {
         "Automotive": {

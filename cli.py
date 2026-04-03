@@ -17,7 +17,6 @@ if __name__ == "__main__":
     anomalies = result["anomalies"]
     alerts = result["alerts"]
     recent_alerts = result["recent_alerts"]
-    analytics_data = result["analytics_data"]
     current, peak = result["memory"]
 
     print("=== SYSTEM SUMMARY ===")
@@ -36,16 +35,8 @@ if __name__ == "__main__":
         )
 
     # analytics
-    sector_totals = {}
-    sector_parameter_breakdown = {}
-
-    for sector, parameter, count in analytics_data:
-        sector_totals[sector] = sector_totals.get(sector, 0) + count
-
-        if sector not in sector_parameter_breakdown:
-            sector_parameter_breakdown[sector] = {}
-
-        sector_parameter_breakdown[sector][parameter] = count
+    sector_totals = result["sector_totals"]
+    sector_parameter_breakdown = result["sector_parameter_breakdown"]
 
     print("\n=== SECTOR SUMMARY ===")
     for sector, total in sector_totals.items():

@@ -3,6 +3,8 @@ from datetime import datetime
 from collections import defaultdict
 
 
+PARAMS = ["temperature", "vibration", "pressure", "energy", "production"]
+
 class DataProcessor:
     """Handles data cleaning and missing value filling"""
 
@@ -11,41 +13,26 @@ class DataProcessor:
         """Process raw data and fill missing values using sector averages"""
 
         # store sums and counts per sector
-        sector_stats = defaultdict(lambda: {
-            "temperature": 0,
-            "vibration": 0,
-            "pressure": 0,
-            "energy": 0,
-            "production": 0,
-            "count": 0
-        })
+        sector_stats = defaultdict(lambda: {param: 0 for param in PARAMS} | {"count": 0})
 
         # calculate totals
         for row in data:
             try:
                 sector = row["sector"]
 
-                temperature = float(row["temperature"]) if row["temperature"] not in ("", None) else None
-                vibration = float(row["vibration"]) if row["vibration"] not in ("", None) else None
-                pressure = float(row["pressure"]) if row["pressure"] not in ("", None) else None
-                energy = float(row["energy"]) if row["energy"] not in ("", None) else None
-                production = float(row["production"]) if row["production"] not in ("", None) else None
+                values = {
+                    param: float(row[param]) if row[param] not in ("", None) else None
+                    for param in PARAMS
+                }
 
-                if all(value is None for value in [temperature, vibration, pressure, energy, production]):
+                if all(v is None for v in values.values()):
                     continue
 
                 sector_stats[sector]["count"] += 1
 
-                if temperature is not None:
-                    sector_stats[sector]["temperature"] += temperature
-                if vibration is not None:
-                    sector_stats[sector]["vibration"] += vibration
-                if pressure is not None:
-                    sector_stats[sector]["pressure"] += pressure
-                if energy is not None:
-                    sector_stats[sector]["energy"] += energy
-                if production is not None:
-                    sector_stats[sector]["production"] += production
+                for param, value in values.items():
+                    if value is not None:
+                        sector_stats[sector][param] += value
 
             except Exception:
                 continue
@@ -57,11 +44,7 @@ class DataProcessor:
             count = values["count"] or 1
 
             sector_averages[sector] = {
-                "temperature": values["temperature"] / count,
-                "vibration": values["vibration"] / count,
-                "pressure": values["pressure"] / count,
-                "energy": values["energy"] / count,
-                "production": values["production"] / count
+                param: values[param] / count for param in PARAMS
             }
 
         processed_data = []
@@ -72,22 +55,18 @@ class DataProcessor:
                 sector = row["sector"]
                 averages = sector_averages.get(sector, {})
 
-                temperature = float(row["temperature"]) if row["temperature"] not in ("", None) else averages.get("temperature", 0)
-                vibration = float(row["vibration"]) if row["vibration"] not in ("", None) else averages.get("vibration", 0)
-                pressure = float(row["pressure"]) if row["pressure"] not in ("", None) else averages.get("pressure", 0)
-                energy = float(row["energy"]) if row["energy"] not in ("", None) else averages.get("energy", 0)
-                production = float(row["production"]) if row["production"] not in ("", None) else averages.get("production", 0)
+                values = {
+                    param: float(row[param]) if row[param] not in ("", None)
+                    else averages.get(param, 0)
+                    for param in PARAMS
+                }
 
                 timestamp = datetime.strptime(row["timestamp"], "%Y-%m-%d %H:%M:%S.%f")
 
                 processed_data.append({
                     "machine_id": row["machine_id"],
                     "sector": sector,
-                    "temperature": temperature,
-                    "vibration": vibration,
-                    "pressure": pressure,
-                    "energy": energy,
-                    "production": production,
+                    **values,
                     "timestamp": timestamp
                 })
 

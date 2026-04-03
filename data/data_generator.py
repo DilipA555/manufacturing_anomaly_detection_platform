@@ -5,6 +5,16 @@ from datetime import datetime, timedelta
 from config.config import Config
 
 
+PARAMS = ["temperature", "vibration", "pressure", "energy", "production"]
+# rule-based anomaly logic
+ANOMALY_RULES = {
+    "temperature": lambda t: random.uniform(t * 1.05, t * 1.3),
+    "vibration": lambda t: random.uniform(t * 1.2, t * 2),
+    "pressure": lambda t: random.uniform(t * 1.1, t * 1.5),
+    "energy": lambda t: random.uniform(t * 1.2, t * 1.5),
+    "production": lambda t: random.uniform(t * 0.3, t * 0.7)
+}
+
 class DataGenerator:
     """Generates synthetic machine data"""
 
@@ -34,9 +44,7 @@ class DataGenerator:
 
                 # header
                 writer.writerow([
-                    "machine_id", "sector", "temperature",
-                    "vibration", "pressure", "energy",
-                    "production", "timestamp"
+                    "machine_id", "sector", *PARAMS, "timestamp"
                 ])
 
                 sectors = list(Config.DEFAULT_THRESHOLDS.keys())
@@ -57,93 +65,33 @@ class DataGenerator:
                     # decide type of data
                     data_type = random.random()
 
-                    # normal data
-                    if data_type < 0.75:
-                        values = self.generate_normal_values(thresholds)
-                        temperature = values["temperature"]
-                        vibration = values["vibration"]
-                        pressure = values["pressure"]
-                        energy = values["energy"]
-                        production = values["production"]
+                    # generate normal data
+                    data = self.generate_normal_values(thresholds)
 
-                    # anomaly data
-                    elif data_type < 0.95:
-                        # start with normal values
-                        values = self.generate_normal_values(thresholds)
-                        temperature = values["temperature"]
-                        vibration = values["vibration"]
-                        pressure = values["pressure"]
-                        energy = values["energy"]
-                        production = values["production"]
+                    # anomaly case
+                    if 0.75 <= data_type < 0.95:
+                        anomaly_params = random.sample(PARAMS, k=random.randint(1, 2))
 
-                        # choose 1 or 2 parameters to be abnormal
-                        anomaly_params = random.sample(
-                            ["temperature", "vibration", "pressure", "energy", "production"],
-                            k=random.randint(1, 2)
-                        )
+                        for param in anomaly_params:
+                            data[param] = ANOMALY_RULES[param](thresholds[param])
 
-                        if "temperature" in anomaly_params:
-                            temperature = random.uniform(thresholds["temperature"] * 1.05, thresholds["temperature"] * 1.3)
+                    # missing case
+                    elif data_type >= 0.95:
+                        # choose how many params to make missing
+                        num_missing = random.randint(1, 2)
+                        missing_params = random.sample(PARAMS, k=num_missing)
 
-                        if "vibration" in anomaly_params:
-                            vibration = random.uniform(thresholds["vibration"] * 1.2, thresholds["vibration"] * 2)
+                        for param in missing_params:
+                            data[param] = None
 
-                        if "pressure" in anomaly_params:
-                            pressure = random.uniform(thresholds["pressure"] * 1.1, thresholds["pressure"] * 1.5)
-
-                        if "energy" in anomaly_params:
-                            energy = random.uniform(thresholds["energy"] * 1.2, thresholds["energy"] * 1.5)
-
-                        if "production" in anomaly_params:
-                            production = random.uniform(thresholds["production"] * 0.3, thresholds["production"] * 0.7)
-
-                    # missing data
-                    else:
-                        # generate normal values first
-                        values = self.generate_normal_values(thresholds)
-                        temperature = values["temperature"]
-                        vibration = values["vibration"]
-                        pressure = values["pressure"]
-                        energy = values["energy"]
-                        production = values["production"]
-
-                        # randomly make some fields missing
-                        if random.random() < 0.2:
-                            temperature = None
-                        if random.random() < 0.2:
-                            vibration = None
-                        if random.random() < 0.2:
-                            pressure = None
-                        if random.random() < 0.2:
-                            energy = None
-                        if random.random() < 0.2:
-                            production = None
-                        
-                        # avoid all values becoming None
-                        if all(v is None for v in [temperature, vibration, pressure, energy, production]):
-                            field = random.choice(["temperature", "vibration", "pressure", "energy", "production"])
-
-                            if field == "temperature":
-                                temperature = random.uniform(thresholds["temperature"] - 10, thresholds["temperature"])
-                            elif field == "vibration":
-                                vibration = random.uniform(thresholds["vibration"] - 0.5, thresholds["vibration"])
-                            elif field == "pressure":
-                                pressure = random.uniform(thresholds["pressure"] - 5, thresholds["pressure"])
-                            elif field == "energy":
-                                energy = random.uniform(thresholds["energy"] - 100, thresholds["energy"])
-                            elif field == "production":
-                                production = random.uniform(thresholds["production"] - 20, thresholds["production"])
-
+                    # timestamp
                     timestamp = datetime.now() - timedelta(minutes=5*i)
 
+                    # write data
                     writer.writerow([
                         machine_id,
                         sector,
-                        temperature,
-                        vibration,
-                        pressure,
-                        energy,
-                        production,
+                        *[data[param] for param in PARAMS],
                         timestamp
                     ])
 

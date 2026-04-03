@@ -19,7 +19,7 @@ class DataIngestion:
         data = []
 
         try:
-            with open(self.file_path, mode='r') as file:
+            with open(self.file_path, mode='r', newline='' ) as file:
                 reader = csv.DictReader(file)
 
                 for row in reader:

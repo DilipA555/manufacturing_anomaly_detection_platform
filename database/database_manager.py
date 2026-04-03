@@ -58,7 +58,8 @@ class DatabaseManager:
                     pressure FLOAT,
                     energy FLOAT,
                     production FLOAT,
-                    timestamp DATETIME
+                    timestamp DATETIME,
+                    FOREIGN KEY (sector) REFERENCES sector_thresholds(sector)
                 )
             """)
 
@@ -70,7 +71,8 @@ class DatabaseManager:
                     sector VARCHAR(50),
                     anomaly_type VARCHAR(50),
                     value FLOAT,
-                    timestamp DATETIME
+                    timestamp DATETIME,
+                    FOREIGN KEY (sector) REFERENCES sector_thresholds(sector)
                 )
             """)
 

@@ -5,6 +5,7 @@ from data.data_ingestion import DataIngestion
 from data.data_processor import DataProcessor
 from detection.anomaly_detector import AnomalyDetector
 from alerts.alert_manager import AlertManager
+from utils.helpers import process_analytics_data
 import logging
 import tracemalloc
 
@@ -69,16 +70,7 @@ def run_pipeline(generate: bool = False) -> Dict[str, Any]:
     # sector analytics
     analytics_data = db.get_anomaly_analytics()
 
-    sector_totals = {}
-    sector_parameter_breakdown = {}
-
-    for sector, parameter, count in analytics_data:
-        sector_totals[sector] = sector_totals.get(sector, 0) + count
-
-        if sector not in sector_parameter_breakdown:
-            sector_parameter_breakdown[sector] = {}
-
-        sector_parameter_breakdown[sector][parameter] = count
+    sector_totals, sector_parameter_breakdown = process_analytics_data(analytics_data)
 
     # close db
     db.close()
@@ -91,6 +83,7 @@ def run_pipeline(generate: bool = False) -> Dict[str, Any]:
     "anomalies": anomalies,
     "alerts": alerts,
     "recent_alerts": recent_alerts,
-    "analytics_data": analytics_data,
-    "memory": (current, peak)
+    "memory": (current, peak),
+    "sector_totals": sector_totals,
+    "sector_parameter_breakdown": sector_parameter_breakdown
 }

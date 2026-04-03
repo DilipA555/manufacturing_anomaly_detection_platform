@@ -116,3 +116,5 @@ with col2:
         st.bar_chart(pivot_df)
     else:
         st.warning("No data")
+
+db.close()

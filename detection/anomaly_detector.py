@@ -2,6 +2,16 @@ from typing import List, Dict, Any
 from config.config import Config
 
 
+PARAMS = ["temperature", "vibration", "pressure", "energy", "production"]
+
+ANOMALY_RULES = {
+    "temperature": lambda val, th: val > th * 1.1,
+    "vibration": lambda val, th: val > th * 1.2,
+    "pressure": lambda val, th: val > th * 1.1,
+    "energy": lambda val, th: val > th * 1.2,
+    "production": lambda val, th: val < th * 0.7
+}
+
 class AnomalyDetector:
     """Detects anomalies based on threshold values with tolerance"""
 
@@ -17,35 +27,13 @@ class AnomalyDetector:
 
             anomaly_flags = {}
 
-            # extract values
-            temperature = record["temperature"]
-            vibration = record["vibration"]
-            pressure = record["pressure"]
-            energy = record["energy"]
-            production = record["production"]
+            for param in PARAMS:
+                value = record[param]
+                threshold = thresholds.get(param)
 
-            # extract thresholds
-            temperature_threshold = thresholds.get("temperature")
-            vibration_threshold = thresholds.get("vibration")
-            pressure_threshold = thresholds.get("pressure")
-            energy_threshold = thresholds.get("energy")
-            production_threshold = thresholds.get("production")
-
-            # apply tolerance-based checks
-            if temperature is not None and temperature > temperature_threshold * 1.1:
-                anomaly_flags["temperature"] = temperature
-
-            if vibration is not None and vibration > vibration_threshold * 1.2:
-                anomaly_flags["vibration"] = vibration
-
-            if pressure is not None and pressure > pressure_threshold * 1.1:
-                anomaly_flags["pressure"] = pressure
-
-            if energy is not None and energy > energy_threshold * 1.2:
-                anomaly_flags["energy"] = energy
-
-            if production is not None and production < production_threshold * 0.7:
-                anomaly_flags["production"] = production
+                if value is not None and threshold is not None:
+                    if ANOMALY_RULES[param](value, threshold):
+                        anomaly_flags[param] = value
 
             # store anomaly if any condition triggered
             if anomaly_flags:
